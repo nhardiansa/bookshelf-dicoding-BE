@@ -85,7 +85,6 @@ const getAllBookHandler = () => {
     return response;
   }
 
-
   response = {
     status: 'success',
     data: {
@@ -128,4 +127,101 @@ const getBookDetailHandler = (request, h) => {
   return response;
 };
 
-module.exports = {addBookHandler, getAllBookHandler, getBookDetailHandler};
+// Mengubah data buku yang sudah ada
+const updateBookDetailHandler = (request, h) => {
+  const {id} = request.params;
+
+  const {name, year, author,
+    summary, publisher, pageCount,
+    readPage, reading} = request.payload;
+  const updatedAt = new Date().toISOString();
+  let response;
+
+  // pengecekan nama
+  if (!name) {
+    response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku. Mohon isi nama buku',
+    });
+
+    response.code(400);
+    return response;
+  }
+
+  if (pageCount < readPage) {
+    response = h.response({
+      status: 'fail',
+      // eslint-disable-next-line max-len
+      message: `Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount`,
+    });
+
+    response.code(400);
+    return response;
+  }
+
+  const index = books.findIndex((book) => book.id === id);
+
+  if (index !== -1) {
+    books[index] = {
+      ...books[index],
+      name,
+      year,
+      author,
+      summary,
+      publisher,
+      pageCount,
+      readPage,
+      reading,
+      updatedAt,
+    };
+
+    response = h.response({
+      status: 'success',
+      message: 'Buku berhasil diperbarui',
+    });
+
+    response.code(200);
+    return response;
+  }
+
+  response = h.response({
+    status: 'fail',
+    message: 'Gagal memperbarui catatan. Id tidak ditemukan',
+  });
+
+  response.code(404);
+  return response;
+};
+
+// Menhapus buku yang sudah ada
+const deleteBookHandler = (request, h) => {
+  const {id} = request.params;
+  let response;
+
+  const index = books.findIndex((book) => book.id === id);
+
+  if (index !== -1) {
+    books.splice(index, 1);
+
+    response = h.response({
+      status: 'success',
+      message: 'Buku berhasil dihapus',
+    });
+
+    response.code(200);
+    return response;
+  }
+
+  response = h.response({
+    status: 'fail',
+    message: 'Buku gagal dihapus. Id tidak ditemukan',
+  });
+
+  response.code(404);
+  return response;
+};
+
+module.exports = {
+  addBookHandler, getAllBookHandler, getBookDetailHandler,
+  updateBookDetailHandler, deleteBookHandler,
+};
