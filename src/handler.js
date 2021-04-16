@@ -72,6 +72,7 @@ const addBookHandler = (request, h) => {
 // Menampilkan seluruh buku
 const getAllBookHandler = () => {
   let response;
+
   if (books.length === 0) {
     response = {
       status: 'success',
