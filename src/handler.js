@@ -9,7 +9,6 @@ const addBookHandler = (request, h) => {
 
   const id = nanoid(16);
   let response;
-  let finished;
 
   // pengecekan nama
   if (!name) {
@@ -23,9 +22,7 @@ const addBookHandler = (request, h) => {
   }
 
   // pengecekan readpage
-  if ( pageCount === readPage ) {
-    finished = true;
-  } else if (pageCount < readPage) {
+  if ( pageCount < readPage ) {
     response = h.response({
       status: 'fail',
       // eslint-disable-next-line max-len
@@ -36,6 +33,7 @@ const addBookHandler = (request, h) => {
     return response;
   }
 
+  const finished = false;
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
@@ -186,7 +184,7 @@ const updateBookDetailHandler = (request, h) => {
 
   response = h.response({
     status: 'fail',
-    message: 'Gagal memperbarui catatan. Id tidak ditemukan',
+    message: 'Gagal memperbarui buku. Id tidak ditemukan',
   });
 
   response.code(404);
